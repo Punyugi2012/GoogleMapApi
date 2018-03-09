@@ -23,9 +23,20 @@
     <script>
       var map;
       function initMap() {
+        var myPosition = {lat: 13.2860, lng: 100.9254}
         map = new google.maps.Map(document.getElementById('map'), {
-          center: {lat: -34.397, lng: 150.644},
-          zoom: 15
+          center: myPosition,
+          zoom: 10,
+        });
+        var marker = new google.maps.Marker({
+          position: myPosition,
+          map: map,
+        });
+        var info = new google.maps.InfoWindow({
+          content: '<div style="font-size:20px;color:red">Hello MotherFucker</div>'
+        });
+        google.maps.event.addListener(marker, 'click', function() {
+          info.open(map, marker);
         });
       }
     </script>
