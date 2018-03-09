@@ -21,24 +21,39 @@
   <body>
     <div id="map"></div>
     <script>
-      var map;
+      var maps;
       function initMap() {
-        var myPosition = {lat: 13.2860, lng: 100.9254}
+        var beaches = [
+          ['Bondi Beach', -33.890542, 151.274856],
+          ['Coogee Beach', -33.923036, 151.259052],
+          ['Cronulla Beach', -34.028249, 151.157507],
+          ['Manly Beach', -33.80010128657071, 151.28747820854187],
+          ['Maroubra Beach', -33.950198, 151.259302]
+        ];
         map = new google.maps.Map(document.getElementById('map'), {
-          center: myPosition,
+          center: new google.maps.LatLng(beaches[0][1], beaches[0][2]),
           zoom: 10,
           mapTypeId: google.maps.MapTypeId.TERRAIN
         });
-        var marker = new google.maps.Marker({
-          position: myPosition,
-          map: map,
-        });
-        var info = new google.maps.InfoWindow({
-          content: '<div style="font-size:20px;color:red">Hello MotherFucker</div>'
-        });
-        google.maps.event.addListener(marker, 'click', function() {
-          info.open(map, marker);
-        });
+
+        var marker, info;
+        var image = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png';
+
+        for(var i = 0; i < beaches.length; i++) {
+          marker = new google.maps.Marker({
+            position: new google.maps.LatLng(beaches[i][1], beaches[i][2]),
+            map: map,
+            icon: image
+          });
+          info = new google.maps.InfoWindow();
+          google.maps.event.addListener(marker, 'click', (function(marker, i) {
+            return function() {
+              info.setContent(beaches[i][0]);
+              info.open(map, marker)
+            }
+          })(marker, i));
+        }
+        
       }
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCfpagu7GeEUlgJYYahci7KGECxZf3Zs0k&callback=initMap"
