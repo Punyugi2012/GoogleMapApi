@@ -27,6 +27,7 @@
         map = new google.maps.Map(document.getElementById('map'), {
           center: myPosition,
           zoom: 10,
+          mapTypeId: google.maps.MapTypeId.TERRAIN
         });
         var marker = new google.maps.Marker({
           position: myPosition,
