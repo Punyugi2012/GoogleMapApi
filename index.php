@@ -16,49 +16,63 @@
         margin: 0;
         padding: 0;
       }
+      #floating-panel {
+        position: absolute;
+        top: 10px;
+        left: 30%;
+        z-index: 5;
+        background-color: #fff;
+        padding: 5px;
+        border: 1px solid #999;
+        text-align: center;
+        font-family: 'Roboto', 'sans-serif';
+        line-height: 30px;
+        padding-left: 10px;
+      }
     </style>
   </head>
   <body>
-    <div id="map"></div>
+
+      <div id="floating-panel">
+        <input type="text" id="address" value="กรุงเทพมหานคร">
+        <input type="button" id="submit" value="ค้นหาข้อมูล">
+      </div>
+      <div id="map"></div>
+
     <script>
-      var map;
       function initMap() {
-        var beaches = [
-          {'location':'Bondi Beach', 'lat':-33.890542, 'lng':151.274856},
-          {'location':'Coogee Beach', 'lat':-33.923036, 'lng':151.259052},
-          {'location':'Cronulla Beach', 'lat':-34.028249, 'lng':151.157507},
-          {'location':'Manly Beach', 'lat':-33.80010128657071, 'lng':151.28747820854187},
-          {'location':'Maroubra Beach', 'lat':-33.950198, 'lng':151.259302}
-        ];
+        var map;
+        var position = {lat:13.847860, lng:100.604274};
         map = new google.maps.Map(document.getElementById('map'), {
-          center: new google.maps.LatLng(beaches[0].lat, beaches[0].lng),
+          center: position,
           zoom: 10,
           mapTypeId: google.maps.MapTypeId.TERRAIN
         });
 
-        var marker, info, image;
-        image = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png';
-
-        beaches.forEach(function(beach, index) {
-          marker = new google.maps.Marker({
-            position: new google.maps.LatLng(beach.lat, beach.lng),
-            map: map,
-            icon: image
-          });
-
-          info = new google.maps.InfoWindow();
-          google.maps.event.addListener(marker, 'click', (function(marker, beach) {
-            return function() {
-              info.setContent(beach.location);
-              info.open(map, marker)
-            }
-          })(marker, beach));
-        })
-      
-        
+        var geocoder = new google.maps.Geocoder();
+        document.getElementById('submit').addEventListener('click', function() {
+          geocodeAddress(geocoder, map);
+        });
+      }
+      function geocodeAddress(geocoder, map) {
+        var address = document.getElementById('address').value;
+        geocoder.geocode({'address':address}, function(results, status) {
+          if(status == 'OK') {
+            console.log(results[0].geometry.location);
+            map.setCenter(results[0].geometry.location);
+            var marker = new google.maps.Marker({
+              map: map,
+              position: results[0].geometry.location
+            });
+          }
+          else {
+            alert('Geocode was not successful for the following reason: ' + status);
+          }
+        });
       }
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCfpagu7GeEUlgJYYahci7KGECxZf3Zs0k&callback=initMap"
     async defer></script>
+
   </body>
 </html>
